@@ -1,4 +1,3 @@
-# Chart.yaml
 apiVersion: v2
 name: muzahid-container-orchastration
 description: A Helm chart for deploying the learner report frontend and backend
