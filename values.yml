@@ -1,4 +1,3 @@
-# values.yaml
 frontend:
   image: "muzahidulnisar/container-orchastration-frontend:latest"
   replicas: 3
