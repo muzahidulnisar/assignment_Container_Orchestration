@@ -1,0 +1,60 @@
+pipeline {
+    agent any
+    environment {
+        FRONTEND_REPO = "https://github.com/UnpredictablePrashant/learnerReportCS_frontend"
+        BACKEND_REPO = "https://github.com/UnpredictablePrashant/learnerReportCS_backend"
+        DOCKERHUB_CRED = "muzahidulnisar-dockerhub"
+        DOCKERHUB_USERNAME = "muzahidulnisar"
+        DOCKERHUB_REPO_FRONTEND = "container-orchastration-frontend"
+        DOCKERHUB_REPO_BACKEND = "container-orchastration-backend"
+        HELM_CHART = "muzahid-container-orchastration"
+    }
+    stages {
+        stage('Clone Repositories') {
+            steps {
+                git branch: "main", url: "${env.FRONTEND_REPO}"
+                git branch: "main", url: "${env.BACKEND_REPO}"
+            }
+        }
+        stage('Parellel Build Docker Images') {
+            parallel{
+                stage('Build frontend Docker') {
+                    steps{
+                        dir('learnerReportCS_frontend'){
+                            docker.build("${env.DOCKERHUB_USERNAME}/${env.DOCKERHUB_REPO_FRONTEND}:latest")
+                        }
+                    }
+                }
+                stage('Build backend Docker') {
+                    steps{
+                        dir('backend'){
+                            docker.build("${env.DOCKERHUB_USERNAME}/${env.DOCKERHUB_REPO_BACKEND}:latest")
+                        }
+                    }
+                }
+            }
+        }
+        stage('Push Docker Images') {
+            steps {
+                script{
+                    docker.withRegistry("", "${env.DOCKERHUB_CRED}") {
+                        docker.image("${env.DOCKERHUB_USERNAME}/${env.DOCKERHUB_REPO_FRONTEND}:latest").push()
+                        docker.image("${env.DOCKERHUB_USERNAME}/${env.DOCKERHUB_REPO_BACKEND}:latest").push()
+                    }
+                }
+            }
+        }
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    sh "helm upgrade --install ${env.HELM_CHART} ./helm --set frontend.image=${env.DOCKERHUB_USERNAME}/${env.DOCKERHUB_REPO_FRONTEND}:latest --set backend.image=${env.DOCKERHUB_USERNAME}/${env.DOCKERHUB_REPO_BACKEND}:latest"
+                }
+            }
+        }
+    }
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}

@@ -1,0 +1,8 @@
+# values.yaml
+frontend:
+  image: "muzahidulnisar/container-orchastration-frontend:latest"
+  replicas: 3
+
+backend:
+  image: "muzahidulnisar/container-orchastration-backend:latest"
+  replicas: 3
