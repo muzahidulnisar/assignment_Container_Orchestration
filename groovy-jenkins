@@ -1,8 +1,8 @@
 pipeline {
     agent any
     environment {
-        FRONTEND_REPO = "https://github.com/UnpredictablePrashant/learnerReportCS_frontend"
-        BACKEND_REPO = "https://github.com/UnpredictablePrashant/learnerReportCS_backend"
+        FRONTEND_REPO = "https://github.com/muzahidulnisar/learnerReportCS_frontend.git"
+        BACKEND_REPO = "https://github.com/muzahidulnisar/learnerReportCS_backend.git"
         DOCKERHUB_CRED = "muzahidulnisar-dockerhub"
         DOCKERHUB_USERNAME = "muzahidulnisar"
         DOCKERHUB_REPO_FRONTEND = "container-orchastration-frontend"
